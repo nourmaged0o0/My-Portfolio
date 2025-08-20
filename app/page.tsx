@@ -100,7 +100,7 @@ export default function Portfolio() {
       id: 2,
       company: "VirtuFirm",
       title: "Co-founder & Backend Track Head",
-      duration: "January 2025 - Present",
+      duration: "January 2025 - July 2025",
       description: "Co-founded a student-led simulation company focused on preparing students for real-world work environments through innovative training modules and workflow simulations.",
       icon: <Brain className="w-5 h-5" />,
     },
