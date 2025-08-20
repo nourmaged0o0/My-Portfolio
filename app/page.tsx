@@ -5,18 +5,25 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Github, Linkedin, Mail, ExternalLink, MapPin, Calendar, Phone, Brain, Code, Database, Server, Globe, Cpu, Zap, Palette, GitBranch, Cloud, Shield, Users, Target, Lightbulb, Languages, MousePointer } from "lucide-react"
+import { Github, Linkedin, Mail, ExternalLink, MapPin, Calendar, Phone, Brain, Code, Database, Server, Globe, Cpu, Zap, Palette, GitBranch, Cloud, Shield, Users, Target, Lightbulb, Languages, MousePointer, X } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { motion } from "framer-motion"
+import { motion, useScroll, useTransform } from "framer-motion"
+import { useEffect, useRef, useState, useMemo, useCallback } from "react"
 import HCIA from "../public/certificates/HCIA.png"
 import HCIP from "../public/certificates/HCIP.png"
 import DotPy from "../public/certificates/DotPy.png"
 import DEPI from "../public/certificates/DEPI.png"
 
 export default function Portfolio() {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll()
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "20%"])
+  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.5, 0])
+  const [selectedCertificate, setSelectedCertificate] = useState<any>(null)
+
   // Smooth scroll function
-  const scrollToSection = (sectionId: string) => {
+  const scrollToSection = useCallback((sectionId: string) => {
     const element = document.getElementById(sectionId)
     if (element) {
       element.scrollIntoView({
@@ -24,9 +31,36 @@ export default function Portfolio() {
         block: 'start',
       })
     }
-  }
+  }, [])
 
-  const projects = [
+  // Close modal when clicking outside or pressing escape
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedCertificate(null)
+      }
+    }
+
+    if (selectedCertificate) {
+      document.addEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'unset'
+    }
+  }, [selectedCertificate])
+
+  // Scroll to top on page refresh/load
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
+  // Memoized data to prevent re-renders
+  const projects = useMemo(() => [
     {
       id: 1,
       title: "PF PredictX",
@@ -51,9 +85,9 @@ export default function Portfolio() {
       category: "Full Stack",
       link: "https://b-ambition.com/",
     },
-  ]
+  ], [])
 
-  const experiences = [
+  const experiences = useMemo(() => [
     {
       id: 1,
       company: "Freelancer",
@@ -86,9 +120,9 @@ export default function Portfolio() {
       description: "Completed HCIA and HCIP levels in AI and ML training. Gained hands-on experience with Machine Learning, Deep Learning, Audio Preprocessing, NLP, and Computer Vision.",
       icon: <Brain className="w-5 h-5" />,
     },
-  ]
+  ], [])
 
-  const volunteering = [
+  const volunteering = useMemo(() => [
     {
       id: 1,
       organization: "180 Daraga",
@@ -103,9 +137,9 @@ export default function Portfolio() {
       duration: "October 2024",
       description: "Led dynamic teams across multiple locations, delivered impactful experiences through collaboration and cultivated strong leadership skills.",
     },
-  ]
+  ], [])
 
-  const education = [
+  const education = useMemo(() => [
     {
       id: 1,
       degree: "Bachelor of Computer Science",
@@ -120,9 +154,9 @@ export default function Portfolio() {
       duration: "April 2024 - November 2024",
       details: "75 training hours in Data Science and AI. Hands-on experience with supervised/unsupervised learning, data analysis, visualization, and statistical modeling.",
     },
-  ]
+  ], [])
 
-  const certificates = [
+  const certificates = useMemo(() => [
     {
       id: 1,
       name: "DEPI Learning Program",
@@ -171,13 +205,13 @@ export default function Portfolio() {
       duration: "7 months",
       type: "On-Site"
     },
-  ]
+  ], [])
 
-  const technicalSkills = [
+  const technicalSkills = useMemo(() => [
     { name: "HTML, CSS", icon: <Globe className="w-4 h-4" />, category: "Frontend" },
     { name: "JavaScript, TypeScript", icon: <Code className="w-4 h-4" />, category: "Programming" },
     { name: "React.js, Next.js", icon: <Zap className="w-4 h-4" />, category: "Frontend" },
-    { name: "Node.js, Express.js", icon: <Server className="w-4 h-5" />, category: "Backend" },
+    { name: "Node.js, Express.js", icon: <Server className="w-4 h-4" />, category: "Backend" },
     { name: "Python", icon: <Code className="w-4 h-4" />, category: "Programming" },
     { name: "Django, Flask", icon: <Server className="w-4 h-4" />, category: "Backend" },
     { name: "TensorFlow/Keras", icon: <Brain className="w-4 h-4" />, category: "AI/ML" },
@@ -193,24 +227,27 @@ export default function Portfolio() {
     { name: "Docker", icon: <Cloud className="w-4 h-4" />, category: "Tools" },
     { name: "AWS", icon: <Cloud className="w-4 h-4" />, category: "Cloud" },
     { name: "Tailwind CSS", icon: <Palette className="w-4 h-4" />, category: "Frontend" },
-  ]
+  ], [])
 
-  const softSkills = [
+  const softSkills = useMemo(() => [
     { name: "Project Management", icon: <Target className="w-4 h-4" /> },
     { name: "Problem Solving", icon: <Lightbulb className="w-4 h-4" /> },
     { name: "Leadership", icon: <Users className="w-4 h-4" /> },
     { name: "Team Working", icon: <Users className="w-4 h-4" /> },
     { name: "Touch Typing", icon: <MousePointer className="w-4 h-4" /> },
     { name: "Intermediate English", icon: <Languages className="w-4 h-4" /> },
-  ]
+  ], [])
 
-  // Animation variants
+  // Simplified animation variants for better performance
   const fadeInUp = {
-    hidden: { opacity: 0, y: 60 },
+    hidden: { opacity: 0, y: 30 },
     visible: { 
       opacity: 1, 
       y: 0,
-      transition: { duration: 0.6 }
+      transition: { 
+        duration: 0.4,
+        ease: "easeOut"
+      }
     }
   }
 
@@ -219,8 +256,8 @@ export default function Portfolio() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2
+        staggerChildren: 0.08,
+        delayChildren: 0.1
       }
     }
   }
@@ -230,64 +267,168 @@ export default function Portfolio() {
     visible: { 
       opacity: 1, 
       y: 0,
-      transition: { duration: 0.5 }
+      transition: { 
+        duration: 0.3,
+        ease: "easeOut"
+      }
     }
   }
 
   const scaleIn = {
-    hidden: { opacity: 0, scale: 0.8 },
+    hidden: { opacity: 0, scale: 0.95 },
     visible: { 
       opacity: 1, 
       scale: 1,
-      transition: { duration: 0.6 }
+      transition: { 
+        duration: 0.4,
+        ease: "easeOut"
+      }
     }
   }
 
+  // Reduced particle count for better performance
+  const particles = useMemo(() => 
+    Array.from({ length: 12 }, (_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      delay: Math.random() * 1.5,
+      duration: 1.5 + Math.random()
+    })), []
+  )
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-[#000000e3] text-white">
+    <div 
+      ref={containerRef}
+      className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-[#000000e3] text-white overflow-hidden"
+    >
+      {/* Certificate Modal */}
+      {selectedCertificate && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          onClick={() => setSelectedCertificate(null)}
+        >
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="relative max-w-4xl w-full max-h-[90vh] bg-gradient-to-br from-gray-900/95 to-gray-800/95 border border-purple-500/30 rounded-2xl overflow-hidden backdrop-blur-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setSelectedCertificate(null)}
+              className="absolute top-4 right-4 z-10 p-2 cursor-pointer bg-purple-600/80 hover:bg-purple-500/80 rounded-full text-white transition-colors duration-200 backdrop-blur-sm"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Certificate Image */}
+            <div className="relative w-full h-[70vh] bg-gray-800/50">
+              <Image
+                src={selectedCertificate.image}
+                alt={selectedCertificate.name}
+                fill
+                className="object-contain"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+              />
+            </div>
+
+            {/* Certificate Details */}
+            <div className="p-6">
+              <h3 className="text-2xl font-bold text-white mb-2">{selectedCertificate.name}</h3>
+              <p className="text-purple-300 mb-4">{selectedCertificate.issuer}</p>
+              <p className="text-gray-300 text-sm leading-relaxed">{selectedCertificate.description}</p>
+              
+              <div className="flex flex-wrap gap-4 mt-4">
+                <div className="flex items-center gap-2 text-gray-300 text-sm">
+                  <MapPin className="w-4 h-4 text-purple-300" />
+                  <span>{selectedCertificate.location}</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-300 text-sm">
+                  <Calendar className="w-4 h-4 text-purple-300" />
+                  <span>{selectedCertificate.date}</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-300 text-sm">
+                  <span>Duration: {selectedCertificate.duration}</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-300 text-sm">
+                  <Globe className="w-4 h-4 text-purple-300" />
+                  <span>Type: {selectedCertificate.type}</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* Simplified Background Particles */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        {particles.map((particle) => (
+          <motion.div
+            key={particle.id}
+            className="absolute w-1 h-1 bg-purple-400/20 rounded-full"
+            style={{
+              left: particle.left,
+              top: particle.top,
+            }}
+            animate={{
+              y: [0, -60, 0],
+              opacity: [0.2, 0.4, 0.2],
+            }}
+            transition={{
+              duration: particle.duration,
+              repeat: Infinity,
+              delay: particle.delay,
+              ease: "linear"
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Simplified Background */}
+      <motion.div
+        className="fixed inset-0 bg-gradient-to-br from-purple-900/15 via-transparent to-pink-900/15"
+        style={{
+          y: y,
+          opacity: opacity,
+        }}
+      />
+
       {/* Navigation */}
       <motion.nav 
         initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-purple-500/20"
+        animate={{ opacity: selectedCertificate ? 0 : 1, y: selectedCertificate ? -100 : 0 }}
+        transition={{ duration: 0.4 }}
+        className="fixed top-0 w-full z-50 backdrop-blur-xl bg-black/40 border-b border-purple-500/30 shadow-2xl"
       >
         <div className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
-            <div className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <motion.div 
+              className="text-2xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent"
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.2 }}
+            >
               NOUR MAGED
-            </div>
+            </motion.div>
             <div className="hidden md:flex space-x-8">
-              <button 
-                onClick={() => scrollToSection('home')}
-                className="text-gray-300 hover:text-purple-400 transition-colors font-medium cursor-pointer"
-              >
-                Home
-              </button>
-              <button 
-                onClick={() => scrollToSection('experience')}
-                className="text-gray-300 hover:text-purple-400 transition-colors font-medium cursor-pointer"
-              >
-                Experience
-              </button>
-              <button 
-                onClick={() => scrollToSection('projects')}
-                className="text-gray-300 hover:text-purple-400 transition-colors font-medium cursor-pointer"
-              >
-                Projects
-              </button>
-              <button 
-                onClick={() => scrollToSection('skills')}
-                className="text-gray-300 hover:text-purple-400 transition-colors font-medium cursor-pointer"
-              >
-                Skills
-              </button>
-              <button 
-                onClick={() => scrollToSection('contact')}
-                className="text-gray-300 hover:text-purple-400 transition-colors font-medium cursor-pointer"
-              >
-                Contact
-              </button>
+              {['home', 'experience', 'projects', 'certificates', 'skills', 'contact'].map((section) => (
+                <motion.button 
+                  key={section}
+                  onClick={() => scrollToSection(section)}
+                  className="text-gray-300 hover:text-purple-400 transition-colors duration-200 font-medium cursor-pointer relative group"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <span className="capitalize">{section}</span>
+                  <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-400 to-pink-400 group-hover:w-full transition-all duration-300" />
+                </motion.button>
+              ))}
             </div>
           </div>
         </div>
@@ -296,34 +437,52 @@ export default function Portfolio() {
       {/* Hero Section */}
       <motion.section 
         id="home" 
-        className="pt-25 pb-20 px-6 scale-95"
+        className="pt-32 pb-20 px-6 relative"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.6 }}
       >
-        <div className="container mx-auto text-center">
+        {/* Simple floating elements */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-20 left-10 w-32 h-32 bg-purple-500/10 rounded-full blur-xl" />
+          <div className="absolute top-40 right-20 w-24 h-24 bg-pink-500/10 rounded-full blur-xl" />
+          <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-blue-500/10 rounded-full blur-xl" />
+        </div>
+
+        <div className="container mx-auto text-center relative z-10">
           <div className="mb-12">
             <motion.h1 
               className="text-6xl md:text-8xl font-bold mb-4 bg-gradient-to-r from-white via-purple-200 to-purple-400 bg-clip-text text-transparent"
-              initial={{ opacity: 0, y: 50 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3}}
+              transition={{ 
+                duration: 0.6,
+                ease: "easeOut"
+              }}
             >
               NOUR MAGED
             </motion.h1>
             <motion.h2 
               className="text-3xl md:text-4xl text-purple-300 mb-8 font-light"
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3}}
+              transition={{ 
+                duration: 0.5,
+                delay: 0.2,
+                ease: "easeOut"
+              }}
             >
               FULL STACK & AI ENGINEER
             </motion.h2>
             <motion.p 
               className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-8"
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3}}
+              transition={{ 
+                duration: 0.5,
+                delay: 0.3,
+                ease: "easeOut"
+              }}
             >
               Full Stack Engineer with a backend focus, skilled in Node.js, Django, MongoDB, and PostgreSQL. 
               Experienced in AI/ML with expertise in Computer Vision, YOLO, and TensorFlow. 
@@ -333,22 +492,29 @@ export default function Portfolio() {
             {/* Contact Info */}
             <motion.div 
               className="flex flex-wrap justify-center gap-6 mb-8 text-gray-300"
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3}}
+              transition={{ 
+                duration: 0.5,
+                delay: 0.4,
+                ease: "easeOut"
+              }}
             >
-              <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-purple-300" />
-                <span>Cairo, Egypt</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Phone className="w-5 h-5 text-purple-300" />
-                <span>(+20) 1270187283</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail className="w-5 h-5 text-purple-300" />
-                <span>nourmaged1822004@gmail.com</span>
-              </div>
+              {[
+                { icon: <MapPin className="w-5 h-5 text-purple-300" />, text: "Cairo, Egypt" },
+                { icon: <Phone className="w-5 h-5 text-purple-300" />, text: "(+20) 1270187283" },
+                { icon: <Mail className="w-5 h-5 text-purple-300" />, text: "nourmaged1822004@gmail.com" }
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  className="flex items-center gap-2"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {item.icon}
+                  <span>{item.text}</span>
+                </motion.div>
+              ))}
             </motion.div>
           </div>
 
@@ -387,15 +553,15 @@ export default function Portfolio() {
       {/* Experience Section */}
       <motion.section 
         id="experience" 
-        className="py-20 px-6 bg-black/30"
+        className="py-20 px-6 relative"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
+        viewport={{ once: true, amount: 0.1 }}
         variants={staggerContainer}
       >
         <div className="container mx-auto">
           <motion.h2 
-            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent"
             variants={fadeInUp}
           >
             EXPERIENCE
@@ -406,15 +572,23 @@ export default function Portfolio() {
               <motion.div
                 key={exp.id}
                 variants={staggerItem}
-                custom={index}
+                whileHover={{ 
+                  scale: 1.01,
+                  y: -2,
+                  transition: { duration: 0.2 }
+                }}
               >
-                <Card className="bg-gray-900/50 border-purple-500/20 hover:border-purple-400/40 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10">
+                <Card className="bg-gradient-to-br from-gray-900/60 to-gray-800/60 border border-purple-500/30 hover:border-purple-400/50 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20 backdrop-blur-xl">
                   <CardHeader>
                     <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
                       <div className="flex items-start gap-4">
-                        <div className="p-3 bg-purple-600/20 rounded-lg border border-purple-500/30 text-purple-300">
+                        <motion.div 
+                          className="p-3 bg-gradient-to-br from-purple-600/30 to-pink-600/30 rounded-lg border border-purple-500/30 text-purple-300 backdrop-blur-sm"
+                          whileHover={{ scale: 1.05 }}
+                          transition={{ duration: 0.2 }}
+                        >
                           {exp.icon}
-                        </div>
+                        </motion.div>
                         <div>
                           <CardTitle className="text-white text-xl">{exp.title}</CardTitle>
                           <div className="flex items-center gap-2 text-purple-300 mt-1">
@@ -422,7 +596,7 @@ export default function Portfolio() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 text-gray-300 bg-purple-600/10 px-3 py-1 rounded-full border border-purple-500/30">
+                      <div className="flex items-center gap-2 text-gray-300 bg-gradient-to-r from-purple-600/20 to-pink-600/20 px-3 py-1 rounded-full border border-purple-500/30 backdrop-blur-sm">
                         <Calendar className="w-4 h-4" />
                         <span className="text-sm font-medium">{exp.duration}</span>
                       </div>
@@ -441,15 +615,15 @@ export default function Portfolio() {
       {/* Projects Section */}
       <motion.section 
         id="projects" 
-        className="py-20 px-6 bg-black/30"
+        className="py-20 px-6 relative"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
+        viewport={{ once: true, amount: 0.1 }}
         variants={staggerContainer}
       >
         <div className="container mx-auto">
           <motion.h2 
-            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent"
             variants={fadeInUp}
           >
             PROJECTS
@@ -460,20 +634,24 @@ export default function Portfolio() {
               <motion.div
                 key={project.id}
                 variants={staggerItem}
-                custom={index}
+                whileHover={{ 
+                  scale: 1.02,
+                  y: -3,
+                  transition: { duration: 0.2 }
+                }}
               >
-                <Card className="bg-gray-900/50 border-purple-500/20 hover:border-purple-400/40 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10 group">
+                <Card className="bg-gradient-to-br from-gray-900/60 to-gray-800/60 border border-purple-500/30 hover:border-purple-400/50 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20 backdrop-blur-xl group h-full">
                   <CardHeader>
                     <div className="flex justify-between items-start mb-2">
                       <CardTitle className="text-white text-xl">{project.title}</CardTitle>
                       <Badge
                         variant="secondary"
-                        className={`text-xs font-medium ${
+                        className={`text-xs font-medium backdrop-blur-sm ${
                           project.category === "AI/ML" 
-                            ? "bg-blue-600/20 text-blue-200 border border-blue-400/30" 
+                            ? "bg-gradient-to-r from-blue-600/30 to-blue-500/30 text-blue-200 border border-blue-400/30" 
                             : project.category === "AI & Full Stack"
-                            ? "bg-purple-600/20 text-purple-200 border border-purple-400/30"
-                            : "bg-green-600/20 text-green-200 border border-green-400/30"
+                            ? "bg-gradient-to-r from-purple-600/30 to-pink-600/30 text-purple-200 border border-purple-400/30"
+                            : "bg-gradient-to-r from-green-600/30 to-green-500/30 text-green-200 border border-green-400/30"
                         }`}
                       >
                         {project.category}
@@ -481,119 +659,29 @@ export default function Portfolio() {
                     </div>
                     <CardDescription className="text-gray-300">{project.description}</CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="flex flex-col h-full">
                     <div className="flex flex-wrap gap-2 mb-4">
                       {project.techStack.map((tech) => (
                         <Badge
                           key={tech}
                           variant="secondary"
-                          className="bg-purple-600/20 text-purple-200 border border-purple-500/30 text-xs"
+                          className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 text-purple-200 border border-purple-500/30 text-xs backdrop-blur-sm"
                         >
                           {tech}
                         </Badge>
                       ))}
                     </div>
-                    <Link href={project.link}  target="_blank">
-                    <Button
-                      variant="outline"
-                      className="w-full cursor-pointer border-purple-500/50 text-purple-200 hover:bg-purple-600/20 hover:border-purple-400 bg-transparent"
-                    >
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      View Project
-                    </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </motion.section>
-
-      {/* Volunteering Section */}
-      <motion.section 
-        className="py-20 px-6 bg-black/30"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        variants={staggerContainer}
-      >
-        <div className="container mx-auto">
-          <motion.h2 
-            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
-            variants={fadeInUp}
-          >
-            VOLUNTEERING
-          </motion.h2>
-
-          <div className="max-w-4xl mx-auto space-y-6">
-            {volunteering.map((vol, index) => (
-              <motion.div
-                key={vol.id}
-                variants={staggerItem}
-                custom={index}
-              >
-                <Card className="bg-gray-900/50 border-purple-500/20 hover:border-purple-400/40 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10">
-                  <CardHeader>
-                    <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
-                      <div>
-                        <CardTitle className="text-white text-xl">{vol.role}</CardTitle>
-                        <div className="text-purple-300 mt-1 font-medium">{vol.organization}</div>
-                      </div>
-                      <div className="flex items-center gap-2 text-gray-300 bg-purple-600/10 px-3 py-1 rounded-full border border-purple-500/30">
-                        <Calendar className="w-4 h-4" />
-                        <span className="text-sm font-medium">{vol.duration}</span>
-                      </div>
+                    <div className="mt-auto">
+                      <Link href={project.link} target="_blank">
+                        <Button
+                          variant="outline"
+                          className="w-full cursor-pointer border-purple-500/50 text-purple-200 hover:bg-gradient-to-r hover:from-purple-600/20 hover:to-pink-600/20 hover:border-purple-400 bg-transparent backdrop-blur-sm transition-all duration-300"
+                        >
+                          <ExternalLink className="w-4 h-4 mr-2" />
+                          View Project
+                        </Button>
+                      </Link>
                     </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-300 leading-relaxed">{vol.description}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </motion.section>
-
-      {/* Education Section */}
-      <motion.section 
-        className="py-20 px-6 bg-black/30"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        variants={staggerContainer}
-      >
-        <div className="container mx-auto">
-          <motion.h2 
-            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
-            variants={fadeInUp}
-          >
-            EDUCATION
-          </motion.h2>
-
-        <div className="max-w-4xl mx-auto space-y-6">
-            {education.map((edu, index) => (
-              <motion.div
-                key={edu.id}
-                variants={staggerItem}
-                custom={index}
-              >
-                <Card className="bg-gray-900/50 border-purple-500/20 hover:border-purple-400/40 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10">
-                  <CardHeader>
-                    <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
-                      <div>
-                        <CardTitle className="text-white text-xl">{edu.degree}</CardTitle>
-                        <div className="text-purple-300 mt-1 font-medium">{edu.institution}</div>
-                      </div>
-                      <div className="flex items-center gap-2 text-gray-300 bg-purple-600/10 px-3 py-1 rounded-full border border-purple-500/30">
-                        <Calendar className="w-4 h-4" />
-                        <span className="text-sm font-medium">{edu.duration}</span>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-300 leading-relaxed">{edu.details}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -604,87 +692,89 @@ export default function Portfolio() {
 
       {/* Certificates Section */}
       <motion.section 
-        className="py-20 px-6 bg-black/30"
+        id="certificates" 
+        className="py-20 px-6 relative"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
+        viewport={{ once: true, amount: 0.1 }}
         variants={staggerContainer}
       >
         <div className="container mx-auto">
           <motion.h2 
-            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent"
             variants={fadeInUp}
           >
             CERTIFICATES
           </motion.h2>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
             {certificates.map((cert, index) => (
               <motion.div
                 key={cert.id}
                 variants={staggerItem}
-                custom={index}
+                whileHover={{ 
+                  scale: 1.02,
+                  y: -3,
+                  transition: { duration: 0.2 }
+                }}
               >
-                <Card className="bg-gray-900/50 border-purple-500/20 hover:border-purple-400/40 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10 group">
+                <Card className="bg-gradient-to-br from-gray-900/60 to-gray-800/60 border border-purple-500/30 hover:border-purple-400/50 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20 backdrop-blur-xl group">
                   <CardHeader>
                     <div className="flex justify-between items-start mb-2">
-                      <CardTitle className="text-white text-lg">{cert.name}</CardTitle>
+                      <CardTitle className="text-white text-xl">{cert.name}</CardTitle>
                       <Badge
                         variant="secondary"
-                        className={`text-xs font-medium ${
+                        className={`text-xs font-medium backdrop-blur-sm ${
                           cert.category === "AI/ML" 
-                            ? "bg-blue-600/20 text-blue-200 border border-blue-400/30" 
-                            : cert.category === "Data Science"
-                            ? "bg-green-600/20 text-green-200 border border-green-400/30"
-                            : "bg-purple-600/20 text-purple-200 border border-purple-400/30"
+                            ? "bg-gradient-to-r from-blue-600/30 to-blue-500/30 text-blue-200 border border-blue-400/30" 
+                            : "bg-gradient-to-r from-green-600/30 to-green-500/30 text-green-200 border border-green-400/30"
                         }`}
                       >
                         {cert.category}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-2 text-purple-300 text-sm font-medium">
-                      <span>{cert.issuer}</span>
+                    <div className="flex items-center gap-2 text-purple-300 mb-2">
+                      <span className="font-medium">{cert.issuer}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-300 bg-gradient-to-r from-purple-600/20 to-pink-600/20 px-3 py-1 rounded-full border border-purple-500/30 backdrop-blur-sm w-fit">
+                      <Calendar className="w-4 h-4" />
+                      <span className="text-sm font-medium">{cert.date}</span>
                     </div>
                   </CardHeader>
                   <CardContent>
                     <p className="text-gray-300 text-sm leading-relaxed mb-3">{cert.description}</p>
-                    
-                    {/* Certificate Image */}
+                    {/* Certificate Image - Clickable */}
                     <div className="mb-3">
-                      <div className="relative w-full h-48 bg-gray-800/50 rounded-lg border border-purple-500/20 overflow-hidden group-hover:border-purple-400/40 transition-colors">
-                        <Image 
-                          src={cert.image} 
+                      <div 
+                        className="relative w-full h-48 bg-gray-800/50 rounded-lg border border-purple-500/20 overflow-hidden group-hover:border-purple-400/40 transition-colors cursor-pointer"
+                        onClick={() => setSelectedCertificate(cert)}
+                      >
+                        <Image
+                          src={cert.image}
                           alt={cert.name}
                           fill
-                          className="object-cover"
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
+                        {/* Click indicator */}
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-purple-600/80 p-2 rounded-full backdrop-blur-sm">
+                            <ExternalLink className="w-4 h-4 text-white" />
+                          </div>
+                        </div>
                       </div>
                     </div>
-
                     {/* Additional Details */}
                     <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-gray-400 text-xs">
-                        <Calendar className="w-3 h-3" />
-                        <span>Issued: {cert.date}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-gray-400 text-xs">
-                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
+                      <div className="flex items-center gap-2 text-gray-300 text-sm">
+                        <MapPin className="w-4 h-4 text-purple-300" />
                         <span>{cert.location}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-gray-400 text-xs">
-                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                      <div className="flex items-center gap-2 text-gray-300 text-sm">
+                        <Calendar className="w-4 h-4 text-purple-300" />
                         <span>Duration: {cert.duration}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-gray-400 text-xs">
-                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
-                        </svg>
+                      <div className="flex items-center gap-2 text-gray-300 text-sm">
+                        <Globe className="w-4 h-4 text-purple-300" />
                         <span>Type: {cert.type}</span>
                       </div>
                     </div>
@@ -699,15 +789,15 @@ export default function Portfolio() {
       {/* Skills Section */}
       <motion.section 
         id="skills" 
-        className="py-20 px-6 bg-black/30"
+        className="py-20 px-6 relative"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
+        viewport={{ once: true, amount: 0.1 }}
         variants={staggerContainer}
       >
         <div className="container mx-auto">
           <motion.h2 
-            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent"
             variants={fadeInUp}
           >
             SKILLS
@@ -724,7 +814,6 @@ export default function Portfolio() {
                 Technical Skills
               </motion.h3>
               
-              {/* Skills by Category */}
               <motion.div 
                 className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
                 variants={staggerContainer}
@@ -733,13 +822,21 @@ export default function Portfolio() {
                   <motion.div
                     key={index}
                     variants={staggerItem}
-                    custom={index}
-                    className="bg-gray-900/50 border border-purple-500/20 rounded-lg px-4 py-3 hover:border-purple-400/40 transition-colors group"
+                    whileHover={{ 
+                      scale: 1.02,
+                      y: -1,
+                      transition: { duration: 0.2 }
+                    }}
+                    className="bg-gradient-to-br from-gray-900/60 to-gray-800/60 border border-purple-500/30 rounded-lg px-4 py-3 hover:border-purple-400/50 transition-all duration-300 backdrop-blur-xl group"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="text-purple-300 group-hover:text-purple-200 transition-colors">
+                      <motion.div 
+                        className="text-purple-300 group-hover:text-purple-200 transition-colors"
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ duration: 0.2 }}
+                      >
                         {skill.icon}
-                      </div>
+                      </motion.div>
                       <span className="text-gray-200 font-medium text-sm">{skill.name}</span>
                     </div>
                   </motion.div>
@@ -764,13 +861,21 @@ export default function Portfolio() {
                   <motion.div
                     key={index}
                     variants={staggerItem}
-                    custom={index}
-                    className="bg-gray-900/50 border border-purple-500/20 rounded-lg px-4 py-3 hover:border-purple-400/40 transition-colors group"
+                    whileHover={{ 
+                      scale: 1.02,
+                      y: -1,
+                      transition: { duration: 0.2 }
+                    }}
+                    className="bg-gradient-to-br from-gray-900/60 to-gray-800/60 border border-purple-500/30 rounded-lg px-4 py-3 hover:border-purple-400/50 transition-all duration-300 backdrop-blur-xl group"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="text-purple-300 group-hover:text-purple-200 transition-colors">
+                      <motion.div 
+                        className="text-purple-300 group-hover:text-purple-200 transition-colors"
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ duration: 0.2 }}
+                      >
                         {skill.icon}
-                      </div>
+                      </motion.div>
                       <span className="text-gray-200 font-medium text-sm">{skill.name}</span>
                     </div>
                   </motion.div>
@@ -784,22 +889,28 @@ export default function Portfolio() {
       {/* Contact Section */}
       <motion.section 
         id="contact" 
-        className="py-20 px-6 bg-black/30"
+        className="py-20 px-6 relative"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
+        viewport={{ once: true, amount: 0.1 }}
         variants={staggerContainer}
       >
         <div className="container mx-auto max-w-2xl">
           <motion.h2 
-            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent"
             variants={fadeInUp}
           >
             GET IN TOUCH
           </motion.h2>
 
-          <motion.div variants={scaleIn}>
-            <Card className="bg-gray-900/50 border-purple-500/20">
+          <motion.div 
+            variants={scaleIn}
+            whileHover={{ 
+              scale: 1.01,
+              transition: { duration: 0.2 }
+            }}
+          >
+            <Card className="bg-gradient-to-br from-gray-900/60 to-gray-800/60 border border-purple-500/30 backdrop-blur-xl">
               <CardHeader>
                 <CardTitle className="text-white text-2xl text-center">Let's Work Together</CardTitle>
                 <CardDescription className="text-gray-300 text-center">
@@ -812,7 +923,7 @@ export default function Portfolio() {
                     <label className="text-sm font-medium text-purple-300 mb-2 block">Name</label>
                     <Input
                       placeholder="Your name"
-                      className="bg-gray-800/50 border-purple-500/30 text-white placeholder:text-gray-500 focus:border-purple-400"
+                      className="bg-gray-800/50 border-purple-500/30 text-white placeholder:text-gray-500 focus:border-purple-400 backdrop-blur-sm"
                     />
                   </div>
                   <div>
@@ -820,7 +931,7 @@ export default function Portfolio() {
                     <Input
                       type="email"
                       placeholder="your.email@example.com"
-                      className="bg-gray-800/50 border-purple-500/30 text-white placeholder:text-gray-500 focus:border-purple-400"
+                      className="bg-gray-800/50 border-purple-500/30 text-white placeholder:text-gray-500 focus:border-purple-400 backdrop-blur-sm"
                     />
                   </div>
                 </div>
@@ -829,12 +940,17 @@ export default function Portfolio() {
                   <Textarea
                     placeholder="Tell me about your project..."
                     rows={5}
-                    className="bg-gray-800/50 border-purple-500/30 text-white placeholder:text-gray-500 focus:border-purple-400"
+                    className="bg-gray-800/50 border-purple-500/30 text-white placeholder:text-gray-500 focus:border-purple-400 backdrop-blur-sm"
                   />
                 </div>
-                <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 rounded-lg shadow-lg hover:shadow-purple-500/25 transition-all duration-300">
-                  Send Message
-                </Button>
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 rounded-lg shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 backdrop-blur-sm">
+                    Send Message
+                  </Button>
+                </motion.div>
               </CardContent>
             </Card>
           </motion.div>
@@ -843,11 +959,11 @@ export default function Portfolio() {
 
       {/* Footer */}
       <motion.footer 
-        className="py-2 px-6 border-t border-purple-500/20 bg-black/50"
+        className="py-4 px-6 border-t border-purple-500/30 bg-gradient-to-r from-black/50 to-gray-900/50 backdrop-blur-xl"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.4 }}
       >
         <div className="container mx-auto text-center">
           <p className="text-gray-400">© 2025 Nour Maged</p>
