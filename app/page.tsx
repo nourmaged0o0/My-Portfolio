@@ -561,7 +561,7 @@ export default function Portfolio() {
       >
         <div className="container mx-auto">
           <motion.h2 
-            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent"
+            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 via-[#b800b8] to-purple-400 bg-clip-text text-transparent"
             variants={fadeInUp}
           >
             EXPERIENCE
@@ -623,7 +623,7 @@ export default function Portfolio() {
       >
         <div className="container mx-auto">
           <motion.h2 
-            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent"
+            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 via-[#b800b8] to-purple-400 bg-clip-text text-transparent"
             variants={fadeInUp}
           >
             PROJECTS
@@ -701,7 +701,7 @@ export default function Portfolio() {
       >
         <div className="container mx-auto">
           <motion.h2 
-            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent"
+            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 via-[#b800b8] to-purple-400 bg-clip-text text-transparent"
             variants={fadeInUp}
           >
             CERTIFICATES
@@ -797,7 +797,7 @@ export default function Portfolio() {
       >
         <div className="container mx-auto">
           <motion.h2 
-            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent"
+            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 via-[#b800b8] to-purple-400 bg-clip-text text-transparent"
             variants={fadeInUp}
           >
             SKILLS
@@ -897,7 +897,7 @@ export default function Portfolio() {
       >
         <div className="container mx-auto max-w-2xl">
           <motion.h2 
-            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent"
+            className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 via-[#b800b8] to-purple-400 bg-clip-text text-transparent"
             variants={fadeInUp}
           >
             GET IN TOUCH
