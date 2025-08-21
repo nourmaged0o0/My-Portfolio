@@ -246,7 +246,7 @@ export default function Portfolio() {
       y: 0,
       transition: { 
         duration: 0.4,
-        ease: "easeOut"
+        ease: "easeOut" as const
       }
     }
   }
@@ -269,7 +269,7 @@ export default function Portfolio() {
       y: 0,
       transition: { 
         duration: 0.3,
-        ease: "easeOut"
+        ease: "easeOut" as const
       }
     }
   }
@@ -281,7 +281,7 @@ export default function Portfolio() {
       scale: 1,
       transition: { 
         duration: 0.4,
-        ease: "easeOut"
+        ease: "easeOut" as const
       }
     }
   }
